@@ -4,6 +4,8 @@ This is a mockserver for the Litenet-controller CLI. It provides a local webserv
 the Litenet-controller can be sent to. The state of the luminaires (on / off / dimmed) are reflected in the
 GUI.
 
+![Example GUI](docs/images/gui_example.png)
+
 # Requirements
 
 -   Node.js >= 16
