@@ -7,6 +7,7 @@ pub const EVENT_DARKER: &str = "darkerLuminaire";
 pub const EVENT_TURN_ON: &str = "turnOnLuminaire";
 pub const EVENT_TURN_OFF: &str = "turnOffLuminaire";
 pub const EVENT_SELECTED_LUMINAIRE: &str = "selectedLuminaire";
+pub const EVENT_LAST_CALL_TIMESTAMP: &str = "lastCallTimestamp";
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct LuminairePayload {

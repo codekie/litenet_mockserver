@@ -3,7 +3,8 @@
 </script>
 
 <style lang="scss">
-  .lm-room { display: flex; flex-flow: row nowrap; padding: 2rem; border: 1px solid #888; border-radius: 4px;
+  .lm-room { display: flex; flex-flow: row nowrap; margin: 1rem; padding: 2rem; border: 1px solid #888;
+      border-radius: 4px;
     .lm-col { display: flex; flex-flow: column nowrap; padding: 0 20px;
       .lm-cell { display: flex; flex-flow: row nowrap; justify-content: center; margin: 1px 0;
         .lm-luminaire { display: inline-block; width: 0.9rem; height: 1.8rem;

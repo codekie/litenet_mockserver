@@ -1,11 +1,12 @@
 use crate::events::{
-    LuminairePayload, EVENT_BRIGHTER, EVENT_DARKER, EVENT_SELECTED_LUMINAIRE, EVENT_TURNED_OFF,
-    EVENT_TURNED_ON,
+    LuminairePayload, EVENT_BRIGHTER, EVENT_DARKER, EVENT_LAST_CALL_TIMESTAMP, EVENT_SELECTED_LUMINAIRE,
+    EVENT_TURNED_OFF, EVENT_TURNED_ON,
 };
 use crate::parameters::LUMINAIRE_ID;
 use scraper::{ElementRef, Html, Selector};
 use std::collections::HashMap;
 use std::fs;
+use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::Window;
 use tracing::info;
 use warp::{reply, Filter};
@@ -38,6 +39,15 @@ fn handle_detail(
     params: &HashMap<String, String>,
 ) -> reply::Html<std::string::String> {
     info!("Starting request handler");
+    window
+        .emit(
+            EVENT_LAST_CALL_TIMESTAMP,
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_millis() as i32,
+        )
+        .unwrap();
     let (action, payload) = create_payload(&mapping_id_name, params);
     info!("Action: {} - {:?}", &action, &payload);
     window.emit(action, payload).unwrap();
