@@ -11,14 +11,18 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::Window;
 use tracing::info;
 use warp::{reply, Filter};
+use std::sync::{Arc, Mutex};
 
 pub fn setup_server(window: Window) {
+    let req_counter = Arc::new(Mutex::new(0));
+
     let login =
         warp::path!("incontrol.web" / "login.aspx").and(warp::fs::file("./static/html/login.aspx"));
     let detail = {
         let page_raw = load_file("detail.aspx");
         let dom = Html::parse_document(&page_raw);
         let mapping_id_name = create_id_name_mapping(&dom);
+        let req_counter = Arc::clone(&req_counter);
         // Clone the window, because we have to move it into the closure below (as it will be used
         // in an async-thread)
         let window_clone = window.clone();
@@ -26,7 +30,7 @@ pub fn setup_server(window: Window) {
             // .and(warp::post().or(warp::get()))
             .and(warp::body::form())
             .map(move |params: HashMap<String, String>| {
-                handle_detail(&window_clone, &page_raw, &mapping_id_name, &params)
+                handle_detail(&window_clone, &req_counter, &page_raw, &mapping_id_name, &params)
             })
     };
     let routes = login.or(detail);
@@ -35,11 +39,13 @@ pub fn setup_server(window: Window) {
 
 fn handle_detail(
     window: &Window,
+    req_counter: &Arc<Mutex<i32>>,
     page_raw: &String,
     mapping_id_name: &HashMap<String, String>,
     params: &HashMap<String, String>,
 ) -> reply::Html<std::string::String> {
-    info!("Starting request handler");
+    let req_counter_raw = counter_increase(&req_counter);
+    info!("[{}] Starting request handler", &req_counter_raw);
     window
         .emit(
             EVENT_LAST_CALL_TIMESTAMP,
@@ -50,11 +56,18 @@ fn handle_detail(
         )
         .unwrap();
     let (action, payload, response) = create_payload(&mapping_id_name, params, &page_raw);
-    info!("Action: {} - {:?}", &action, &payload);
+    info!("[{}] Action: {} - {:?}", &req_counter_raw, &action, &payload);
     window.emit(action, payload).unwrap();
     let result = reply::html(response);
-    info!("Finished request handler");
+    info!("[{}] Finished request handler", &req_counter_raw);
     result
+}
+
+fn counter_increase(counter: &Arc<Mutex<i32>>) -> i32 {
+    let mut counter_inner = counter.lock().unwrap();
+    let current = *counter_inner;
+    *counter_inner += 1;
+    current
 }
 
 fn load_file(file_name: &str) -> String {
