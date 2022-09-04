@@ -62,8 +62,8 @@ async function _bindEvents(luminaires, selectedLuminaire) {
 }
 
 function _updateLuminaire(luminaires, selectedLuminaire, name, levelIncrease) {
-    const { update } = luminaires;
-    update((luminaires) => {
+    selectedLuminaire.update(() => name);
+    luminaires.update((luminaires) => {
         const name = get(selectedLuminaire);
         const luminaire = luminaires.get(name);
         luminaire.level = Math.min(

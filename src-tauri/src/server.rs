@@ -1,8 +1,9 @@
 use crate::events::{
-    LuminairePayload, EVENT_BRIGHTER, EVENT_DARKER, EVENT_LAST_CALL_TIMESTAMP, EVENT_SELECTED_LUMINAIRE,
-    EVENT_TURNED_OFF, EVENT_TURNED_ON,
+    LuminairePayload, EVENT_BRIGHTER, EVENT_DARKER, EVENT_LAST_CALL_TIMESTAMP,
+    EVENT_SELECTED_LUMINAIRE, EVENT_TURNED_OFF, EVENT_TURNED_ON,
 };
 use crate::parameters::LUMINAIRE_ID;
+use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use std::collections::HashMap;
 use std::fs;
@@ -48,10 +49,10 @@ fn handle_detail(
                 .as_millis() as i32,
         )
         .unwrap();
-    let (action, payload) = create_payload(&mapping_id_name, params);
+    let (action, payload, response) = create_payload(&mapping_id_name, params, &page_raw);
     info!("Action: {} - {:?}", &action, &payload);
     window.emit(action, payload).unwrap();
-    let result = reply::html(page_raw.to_owned());
+    let result = reply::html(response);
     info!("Finished request handler");
     result
 }
@@ -63,7 +64,8 @@ fn load_file(file_name: &str) -> String {
 fn create_payload<'a>(
     mapping_id_name: &'a HashMap<String, String>,
     params: &'a HashMap<String, String>,
-) -> (&'a str, LuminairePayload) {
+    page_raw: &String,
+) -> (&'a str, LuminairePayload, String) {
     let x_opt = params.get("ctl00$cphBody$ibLight.x");
     let y_opt = params.get("ctl00$cphBody$ibLight.y");
 
@@ -90,12 +92,19 @@ fn create_payload<'a>(
         _ => None,
     };
 
-    let name = match params.get(LUMINAIRE_ID) {
-        Some(id) => Some(mapping_id_name.get(id).unwrap().to_owned()),
-        None => None,
+    let (name, response) = match params.get(LUMINAIRE_ID) {
+        Some(id) => (
+            Some(mapping_id_name.get(id).unwrap().to_owned()),
+            set_selected_node(page_raw, id),
+        ),
+        None => (None, page_raw.to_owned()),
     };
 
-    (action, LuminairePayload { name: name, level })
+    (
+        action,
+        LuminairePayload { name, level },
+        response.to_owned(),
+    )
 }
 
 fn create_id_name_mapping(dom: &Html) -> HashMap<String, String> {
@@ -114,4 +123,17 @@ fn create_id_name_mapping(dom: &Html) -> HashMap<String, String> {
         );
     }
     mapping
+}
+
+fn set_selected_node(response: &str, luminaire_id: &str) -> String {
+    let regex = Regex::new(r#"\s+id="ctl00_cphBody_tvDevices_SelectedNode"\s+value="""#).unwrap();
+    regex
+        .replace(
+            response,
+            format!(
+                r#" id="ctl00_cphBody_tvDevices_SelectedNode" value="{}" "#,
+                luminaire_id
+            ),
+        )
+        .to_string()
 }

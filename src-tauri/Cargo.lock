@@ -1509,6 +1509,7 @@ name = "litenet_mockserver"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "regex",
  "scraper",
  "serde",
  "serde_derive",

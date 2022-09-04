@@ -78,7 +78,7 @@
                     type="hidden"
                     name="ctl00_cphBody_tvDevices_SelectedNode"
                     id="ctl00_cphBody_tvDevices_SelectedNode"
-                    value="ctl00_cphBody_tvDevicest16"
+                    value=""
                 />
                 <input
                     type="hidden"
