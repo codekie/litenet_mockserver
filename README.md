@@ -6,12 +6,12 @@ GUI.
 
 ![Example GUI](docs/images/gui_example.png)
 
-# Requirements
+## Requirements
 
 -   Node.js >= 16
 -   Rust >= 1.62
 
-# Run the server
+## Run the server
 
 This is a [Tauri](https://tauri.app/) app. To run the server in dev-mode, run following command:
 
@@ -21,11 +21,11 @@ npm run tauri dev
 
 The webserver listens to the port `8000` by default.
 
-# Technologies used
+## Technologies used
 
 -   Tauri (with Svelte, Vite and Rust)
 
-# Motivations
+## Motivations
 
 -   Create a mockserver to make testing the Litenet-controller CLI easier
 -   Practice Rust
