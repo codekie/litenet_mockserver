@@ -4,6 +4,8 @@ This is a mockserver for the Litenet-controller CLI. It provides a local webserv
 the Litenet-controller can be sent to. The state of the luminaires (on / off / dimmed) are reflected in the
 GUI.
 
+The webserver listens to the port `8000` by default.
+
 ![Example GUI](docs/images/gui_example.png)
 
 ## Requirements
@@ -19,7 +21,13 @@ This is a [Tauri](https://tauri.app/) app. To run the server in dev-mode, run fo
 npm run tauri dev
 ```
 
-The webserver listens to the port `8000` by default.
+## Build the app
+
+To build an OS-native app, run following command:
+
+```sh
+npm run tauri build
+```
 
 ## Technologies used
 
