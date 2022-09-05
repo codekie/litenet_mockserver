@@ -28,7 +28,7 @@
           <div class="lm-luminaire"
                data-name="{luminaire.name}"
                style="background-color: rgba(255, 255, 255, {
-                  ($luminaires.get(luminaire.name).level / 100) * 0.8 + 0.2
+                  ($luminaires.get(luminaire.name).level / 129) * 0.8 + 0.2
                })">
             <span class="lm-coords">{idxCol},{idxRow}</span>
           </div>
