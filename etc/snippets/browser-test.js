@@ -491,14 +491,6 @@
             await new CommandQueue({ concurrent: false })
                 .add(
                     LightPattern.byLuminairePattern(
-                        Action.off,
-                        LuminairePatternBuilder.getArea,
-                        [0, 0],
-                        [3, 11]
-                    )
-                )
-                .add(
-                    LightPattern.byLuminairePattern(
                         Action.on,
                         LuminairePatternBuilder.getArea,
                         [0, 0],
@@ -511,6 +503,18 @@
                         LuminairePatternBuilder.getArea,
                         [0, 0],
                         [3, 11]
+                    )
+                )
+                .add(
+                    LightPattern.byLuminairePattern(
+                        Action.on,
+                        LuminairePatternBuilder.getSpiral
+                    )
+                )
+                .add(
+                    LightPattern.byLuminairePattern(
+                        Action.off,
+                        LuminairePatternBuilder.getSpiral
                     )
                 )
                 .run(responseHtml);
