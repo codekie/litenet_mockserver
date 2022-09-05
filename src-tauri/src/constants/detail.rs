@@ -1,3 +1,7 @@
+// As static files that are used by the Rust backend are not automatically bundled into the
+// binary, we provide the content of those files as constants
+
+pub const DETAIL: &'static str = r###"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <link
     REL="SHORTCUT ICON"
@@ -2496,3 +2500,4 @@
         </form>
     </body>
 </html>
+"###;

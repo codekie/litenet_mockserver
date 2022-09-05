@@ -8,6 +8,7 @@ pub mod luminaire;
 pub mod parameters;
 pub mod room;
 pub mod server;
+pub mod constants;
 
 use crate::events::EVENT_TURN_ON;
 use crate::luminaire::Luminaire;

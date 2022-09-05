@@ -1,8 +1,10 @@
+// As static files that are used by the Rust backend are not automatically bundled into the
+// binary, we provide the content of those files as constants
 
-
+pub const LOGIN: &'static str = r###"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-    
+
+
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head id="Head1"><link href="App_Themes/steel_gray/default.css" type="text/css" rel="stylesheet" /><title>
 	LITENET Incontrol
@@ -39,7 +41,7 @@ function __doPostBack(eventTarget, eventArgument) {
 </div>
     <div id="divMenu" style="vertical-align:middle; padding-left: 0px; padding-top: 1px;">
     <span id="lblLogin" style="padding-left:5px; color:#FFFFFF; font-size:20px; font-weight:bold">Anmeldung</span>
-    </div>     
+    </div>
     <div id="divBody">
         <div id="divLogin" class="divInnerBody">
             <table width="500px" border="0px">
@@ -58,7 +60,7 @@ function __doPostBack(eventTarget, eventArgument) {
                         <input onclick="if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate(''); __doPostBack('cmdChangePassword','')" name="cmdChangePassword" type="button" id="cmdChangePassword" style="width:150px; font-size: 8pt;" value="Passwort ändern" />
                     </td>
                 </tr>
-            
+
             </table><br>
             <table>
                 <tr>
@@ -68,15 +70,15 @@ function __doPostBack(eventTarget, eventArgument) {
                 </tr>
             </table>
         </div>
-        
+
     </div>
     <div id="divFooter">
            <table width="100%" border="0" cellpadding="0" cellspacing="0" >
                     <tr>
-                    
-                       
+
+
                         <td width="95%" align="right" valign="baseline"  style="border:0px; padding-top:6px; padding-right:4px;">
-                           
+
                              <a href="http://www.zumtobel.com/" TARGET="_blank"><img border=0 src="Images/Logo_Zumtobel_neg_128px.gif" alt="Zumtobel Lighting" ></a>
                         </td>
                     </tr>
@@ -85,4 +87,4 @@ function __doPostBack(eventTarget, eventArgument) {
     </form>
 </body>
 </html>
-
+"###;

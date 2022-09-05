@@ -6,20 +6,21 @@ use crate::parameters::LUMINAIRE_ID;
 use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use std::collections::HashMap;
-use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::Window;
-use tracing::info;
+use tracing::{info, span, Level};
 use warp::{reply, Filter};
 use std::sync::{Arc, Mutex};
+use crate::constants::detail::DETAIL;
+use crate::constants::login::LOGIN;
 
 pub fn setup_server(window: Window) {
     let req_counter = Arc::new(Mutex::new(0));
 
     let login =
-        warp::path!("incontrol.web" / "login.aspx").and(warp::fs::file("./static/html/login.aspx"));
+        warp::path!("incontrol.web" / "login.aspx").map(|| LOGIN);
     let detail = {
-        let page_raw = load_file("detail.aspx");
+        let page_raw = DETAIL.to_owned();
         let dom = Html::parse_document(&page_raw);
         let mapping_id_name = create_id_name_mapping(&dom);
         let req_counter = Arc::clone(&req_counter);
@@ -45,7 +46,8 @@ fn handle_detail(
     params: &HashMap<String, String>,
 ) -> reply::Html<std::string::String> {
     let req_counter_raw = counter_increase(&req_counter);
-    info!("[{}] Starting request handler", &req_counter_raw);
+    let span = span!(Level::INFO, "Request", id = req_counter_raw);
+    let _enter = span.enter();
     window
         .emit(
             EVENT_LAST_CALL_TIMESTAMP,
@@ -56,10 +58,9 @@ fn handle_detail(
         )
         .unwrap();
     let (action, payload, response) = create_payload(&mapping_id_name, params, &page_raw);
-    info!("[{}] Action: {} - {:?}", &req_counter_raw, &action, &payload);
+    info!("Action: {} - {:?}", &action, &payload);
     window.emit(action, payload).unwrap();
     let result = reply::html(response);
-    info!("[{}] Finished request handler", &req_counter_raw);
     result
 }
 
@@ -68,10 +69,6 @@ fn counter_increase(counter: &Arc<Mutex<i32>>) -> i32 {
     let current = *counter_inner;
     *counter_inner += 1;
     current
-}
-
-fn load_file(file_name: &str) -> String {
-    fs::read_to_string(format!("static/html/{}", file_name)).expect("Unable to read file")
 }
 
 fn create_payload<'a>(
