@@ -1,3 +1,5 @@
+use crate::constants::detail::DETAIL;
+use crate::constants::login::LOGIN;
 use crate::events::{
     LuminairePayload, EVENT_BRIGHTER, EVENT_DARKER, EVENT_LAST_CALL_TIMESTAMP,
     EVENT_SELECTED_LUMINAIRE, EVENT_TURNED_OFF, EVENT_TURNED_ON,
@@ -6,19 +8,19 @@ use crate::parameters::LUMINAIRE_ID;
 use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::Window;
 use tracing::{info, span, Level};
 use warp::{reply, Filter};
-use std::sync::{Arc, Mutex};
-use crate::constants::detail::DETAIL;
-use crate::constants::login::LOGIN;
 
 pub fn setup_server(window: Window) {
     let req_counter = Arc::new(Mutex::new(0));
 
-    let login =
-        warp::path!("incontrol.web" / "login.aspx").map(|| LOGIN);
+    // Define CORS
+    let cors = warp::cors().allow_any_origin();
+    // Define routes
+    let login = warp::path!("incontrol.web" / "login.aspx").map(|| LOGIN);
     let detail = {
         let page_raw = DETAIL.to_owned();
         let dom = Html::parse_document(&page_raw);
@@ -31,10 +33,17 @@ pub fn setup_server(window: Window) {
             // .and(warp::post().or(warp::get()))
             .and(warp::body::form())
             .map(move |params: HashMap<String, String>| {
-                handle_detail(&window_clone, &req_counter, &page_raw, &mapping_id_name, &params)
+                handle_detail(
+                    &window_clone,
+                    &req_counter,
+                    &page_raw,
+                    &mapping_id_name,
+                    &params,
+                )
             })
     };
-    let routes = login.or(detail);
+    // Start server
+    let routes = login.or(detail).with(cors);
     tauri::async_runtime::spawn(warp::serve(routes).run(([127, 0, 0, 1], 8000)));
 }
 
