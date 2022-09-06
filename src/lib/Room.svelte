@@ -26,7 +26,7 @@
       {#each cols as luminaire, idxRow}
         <div class="lm-cell">
           <div class="lm-luminaire"
-               data-name="{luminaire.name}"
+               title="{luminaire.name}"
                style="background-color: rgba(255, 255, 255, {
                   ($luminaires.get(luminaire.name).level / 129) * 0.8 + 0.2
                })">
