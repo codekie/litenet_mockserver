@@ -2,7 +2,7 @@ use crate::constants::detail::DETAIL;
 use crate::constants::login::LOGIN;
 use crate::events::{
     LuminairePayload, EVENT_BRIGHTER, EVENT_DARKER, EVENT_LAST_CALL_TIMESTAMP,
-    EVENT_SELECTED_LUMINAIRE, EVENT_TURNED_OFF, EVENT_TURNED_ON,
+    EVENT_SELECTED_LUMINAIRE, EVENT_TURNED_OFF, EVENT_TURNED_ON, EVENT_NEW_REQUEST,
 };
 use crate::parameters::LUMINAIRE_ID;
 use regex::Regex;
@@ -54,6 +54,7 @@ fn handle_detail(
     mapping_id_name: &HashMap<String, String>,
     params: &HashMap<String, String>,
 ) -> reply::Html<std::string::String> {
+    window.emit(EVENT_NEW_REQUEST, 1).unwrap();
     let req_counter_raw = counter_increase(&req_counter);
     let span = span!(Level::INFO, "Request", id = req_counter_raw);
     let _enter = span.enter();

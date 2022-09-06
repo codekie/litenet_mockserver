@@ -39,6 +39,11 @@
     justify-content: center;
 }
 
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
 a {
     font-weight: 500;
     color: #646cff;

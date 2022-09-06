@@ -1,6 +1,7 @@
 <script>
   import Room from './lib/Room.svelte'
   import DurationHistogram from './lib/DurationHistogram.svelte';
+  import Gauge from './lib/Gauge.svelte';
 </script>
 
 <style lang="scss">
@@ -12,6 +13,9 @@
 <main class="container">
   <div class="lm-main row">
     <Room />
-    <DurationHistogram />
+    <div class="col">
+      <DurationHistogram />
+      <Gauge />
+    </div>
   </div>
 </main>
